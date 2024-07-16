@@ -6,6 +6,7 @@ import { verifyOtpOfUser } from '~/databaseCall/verifyOtpOfUser';
 import { useDispatch } from 'react-redux';
 import { setUserDetail } from '../store/userSlice';
 import { markedOtpVerified } from '~/databaseCall/markedOtpVerified';
+import { sendEmailVerification } from '~/databaseCall/sendEmailVerification';
 
 function verifyOtp({ keepEmail, setsignup, setLogin, setVerifyOtp }) {
 
@@ -50,8 +51,21 @@ function verifyOtp({ keepEmail, setsignup, setLogin, setVerifyOtp }) {
         }
     };
 
+    useEffect(() => {
+        if (keepEmail.length > 0 && keepEmail.includes("@gmail.com")) {
+            sendEmailVerification(keepEmail)
+                .then((res) => {
+                    console.log("sending email otp successfully: ", res);
+                })
+                .catch((error) => {
+                    console.log("sending email otp failed: ", error);
+                })
+        }
+    }, [])
+
     const handleVerifyEmail = async (e) => {
         e.preventDefault()
+
         verifyOtpOfUser(e, inputOtp, keepEmail)
             .then((data) => {
                 console.log("data received after verifying user: ", data);
@@ -65,6 +79,7 @@ function verifyOtp({ keepEmail, setsignup, setLogin, setVerifyOtp }) {
                     })
             })
             .catch((error) => {
+                console.log("otp verification failed: ", error);
 
             })
     }
