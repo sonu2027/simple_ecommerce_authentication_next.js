@@ -35,7 +35,8 @@ function signUp({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
                 setSignupSuccess(true)
             })
             .catch((error) => {
-
+                console.log("Error userRegistartion: ", error);
+                
             })
     }
 
@@ -59,7 +60,7 @@ function signUp({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
 
                 <div className='flex flex-col'>
                     <label htmlFor="userpassword">Password</label>
-                    <input onChange={(e) => setUserpassword(e.target.value)} required className='border-1 border-solid border-gray-300 rounded-md px-2 py-1 focus:outline-none' type="password" name="userpassword" id="userpassword" placeholder='Enter' />
+                    <input minLength={8} onChange={(e) => setUserpassword(e.target.value)} required className='border-1 border-solid border-gray-300 rounded-md px-2 py-1 focus:outline-none' type="password" name="userpassword" id="userpassword" placeholder='Enter' />
                 </div>
 
                 <button className='bg-black text-white rounded-md py-2 mt-2' type="submit">Create Account</button>

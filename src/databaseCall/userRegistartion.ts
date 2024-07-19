@@ -11,8 +11,7 @@ export async function userRegistartion(username, useremail, userpassword) {
             throw new Error('Failed to create post');
         }
         const data = await response.json();
-        console.log('Post created:', data);
     } catch (error) {
-        console.error('Error creating post:', error);
+        throw error
     }
 }

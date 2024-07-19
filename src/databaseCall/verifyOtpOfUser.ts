@@ -14,10 +14,8 @@ export async function verifyOtpOfUser(e, inputOtp, useremail) {
             throw new Error('Failed to verify user');
         }
         const data = await response.json();
-        console.log('Email verified:', data);
         return data
     } catch (error) {
-        console.error('Error verifying email:', error);
         throw error
     }
 }

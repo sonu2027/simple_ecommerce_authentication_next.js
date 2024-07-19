@@ -28,3 +28,15 @@ model User {
   verified  Boolean
   createdAt DateTime @default(now())
 }
+
+model MarkedProductId {
+  productId   String
+  userId      Int
+  @@id([productId, userId])
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+}

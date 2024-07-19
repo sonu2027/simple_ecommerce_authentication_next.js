@@ -1,14 +1,14 @@
-export const sendEmailVerification = async (email) => {
+export async function createMarkProduct(userId, productId) {
     try {
-        const response = await fetch('/api/sendEmailVerificationCode', {
+        const response = await fetch('/api/markProduct', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ userId, productId }),
         });
         if (!response.ok) {
-            throw new Error('Failed to send email otp');
+            throw new Error('Failed to marked product for user');
         }
         const data = await response.json();
         return data

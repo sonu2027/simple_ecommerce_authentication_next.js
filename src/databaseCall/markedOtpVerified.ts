@@ -11,10 +11,8 @@ export async function markedOtpVerified(email) {
             throw new Error('Failed to verify user');
         }
         const data = await response.json();
-        console.log('user verified:', data);
         return data
     } catch (error) {
-        console.error('Error verifying user:', error);
         throw error
     }
 }

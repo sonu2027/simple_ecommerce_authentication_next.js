@@ -58,7 +58,7 @@ function verifyOtp({ keepEmail, setsignup, setLogin, setVerifyOtp }) {
                     console.log("sending email otp successfully: ", res);
                 })
                 .catch((error) => {
-                    console.log("sending email otp failed: ", error);
+                    console.error("sending email otp failed: ", error);
                 })
         }
     }, [])
@@ -66,9 +66,14 @@ function verifyOtp({ keepEmail, setsignup, setLogin, setVerifyOtp }) {
     const handleVerifyEmail = async (e) => {
         e.preventDefault()
 
+        for (let i = 0; i < inputOtp.length; i++) {
+            if (inputOtp[i] == "") {
+                return
+            }
+        }
+
         verifyOtpOfUser(e, inputOtp, keepEmail)
             .then((data) => {
-                console.log("data received after verifying user: ", data);
                 return data.email
             })
             .then((email) => {
@@ -77,15 +82,17 @@ function verifyOtp({ keepEmail, setsignup, setLogin, setVerifyOtp }) {
                         setVerificationSuccess(true)
                         dispatch(setUserDetail(data))
                     })
+                    .catch((error) => {
+                        console.error("Error markedOtpVerified: ", error);
+                    })
             })
             .catch((error) => {
-                console.log("otp verification failed: ", error);
-
+                console.error("otp verification failed: ", error);
             })
     }
 
     return (
-        <div className='flex flex-col gap-y-4 border-1 border-solid border-gray-300 py-4 px-8 rounded-xl'>
+        <div className='flex flex-col gap-y-4 border-1 border-solid border-gray-300 pt-6 pb-11 px-8 rounded-xl'>
             <div className='text-center font-semibold text-2xl'>Verify Your email</div>
             <div>
                 <div className='text-center text-sm'>Enter the 8 digit code you have received on</div>

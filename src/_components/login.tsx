@@ -25,7 +25,6 @@ function login({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
         e.preventDefault()
         userLogin(useremail, userpassword)
             .then((data) => {
-                console.log("data received while login is: ", data);
 
                 if (!data.verified) {
                     setsignup(false)
@@ -38,7 +37,8 @@ function login({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
                 }
             })
             .catch((error) => {
-
+                console.error("Error userLogin: ", error);
+                
             })
     }
 
@@ -62,16 +62,16 @@ function login({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
 
                 <div className='flex flex-col'>
                     <label htmlFor="userpassword">Password</label>
-                    <input onChange={(e) => setUserPassword(e.target.value)} minLength={2} required className='border-1 border-solid border-gray-300 rounded-md px-2 py-1 focus:outline-none' type={password ? "text" : "password"} name="userpassword" id="userpassword" placeholder='Enter' />
+                    <input onChange={(e) => setUserPassword(e.target.value)} minLength={8} required className='border-1 border-solid border-gray-300 rounded-md px-2 py-1 focus:outline-none' type={password ? "text" : "password"} name="userpassword" id="userpassword" placeholder='Enter' />
                     {
-                        password ? <button onClick={() => showPassword(false)} className='underline relative bottom-7 left-32'>Hide</button> : <button onClick={() => showPassword(true)} className='underline relative bottom-7 left-32'>Show</button>
+                        password ? <button onClick={() => showPassword(false)} className='underline relative bottom-7 left-64 ml-4 flex justify-start w-10'>Hide</button> : <button onClick={() => showPassword(true)} className='underline relative bottom-7 left-64 ml-4 flex justify-start w-10'>Show</button>
                     }
                 </div>
 
                 <button className='bg-black text-white rounded-md py-2' type="submit">Login</button>
             </form>
 
-            <div className='mt-4 mb-16 text-center'>
+            <div className='mt-4 mb-8 text-center'>
                 <span>Don't have an Account?</span>
                 <button onClick={handleComponentRendering} className='ml-2 font-medium'>SIGN UP</button>
             </div>
