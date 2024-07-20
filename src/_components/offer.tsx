@@ -2,7 +2,7 @@ import React from 'react'
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 
-function offer() {
+function Offer() {
     return (
         <div className='flex justify-center items-center gap-x-4 py-1 bg-gray-100 text-xs'>
             <IoIosArrowBack />
@@ -12,4 +12,4 @@ function offer() {
     )
 }
 
-export default offer
+export default Offer

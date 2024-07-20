@@ -2,10 +2,28 @@
 import React, { useState } from 'react'
 import { userLogin } from '~/databaseCall/userLogin'
 import { useDispatch } from 'react-redux'
-import { removeUserDetail, setUserDetail } from '~/store/userSlice'
+import { setUserDetail } from '~/store/userSlice'
 import { useRouter } from 'next/router'
 
-function login({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
+type LoginProps = {
+    setKeepEmail: (email: string) => void;
+    setsignup: (value: boolean) => void;
+    setLogin: (value: boolean) => void;
+    setVerifyOtp: (value: boolean) => void;
+}
+
+type UserData = {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    otp: string;
+    verified: boolean;
+    createdAt: string;
+}
+
+
+const Login: React.FC<LoginProps> = ({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) => {
 
     const dispatch = useDispatch()
     const router = useRouter()
@@ -21,30 +39,31 @@ function login({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
         setVerifyOtp(false)
     }
 
-    const handleLogin = (e) => {
+    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         userLogin(useremail, userpassword)
-            .then((data) => {
-
+            .then((data: UserData) => {
                 if (!data.verified) {
+                    console.log("why");
+
                     setsignup(false)
                     setLogin(false)
                     setVerifyOtp(true)
                 }
                 else {
                     dispatch(setUserDetail(data))
-                    router.push("/homepage")
+                    void router.push("/homepage")
                 }
             })
             .catch((error) => {
                 console.error("Error userLogin: ", error);
-                
+
             })
     }
 
     return (
         <div className='flex flex-col gap-y-4 border-1 border-solid border-gray-300 py-4 px-8 rounded-xl'>
-            <div className='text-center font-semibold text-2xl'>Login</div>
+            <div className='text-center font-semibold text-xl sm:text-2xl'>Login</div>
             <div>
                 <div className='text-center font-medium text-xl'>Welcome back to ECOMMERCE</div>
                 <div className='text-center text-sm'>The next gen business marketplace</div>
@@ -72,11 +91,11 @@ function login({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
             </form>
 
             <div className='mt-4 mb-8 text-center'>
-                <span>Don't have an Account?</span>
+                <span>Don&apos; have an Account?</span>
                 <button onClick={handleComponentRendering} className='ml-2 font-medium'>SIGN UP</button>
             </div>
         </div>
     )
 }
 
-export default login
+export default Login

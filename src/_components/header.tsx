@@ -7,15 +7,16 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { removeUserDetail } from '~/store/userSlice';
+import type { RootState } from '~/store/store';
 
-function header() {
+function Header() {
 
-    const router=useRouter()
-    const dispatch=useDispatch()
+    const router = useRouter()
+    const dispatch = useDispatch()
 
     const [showLogout, setShowLogout] = useState(false)
 
-    const user = useSelector((s) => s.user.data)
+    const user = useSelector((s: RootState) => s.user.data)
 
     window.addEventListener("click", () => {
         if (showLogout) {
@@ -23,15 +24,15 @@ function header() {
         }
     })
 
-    const handleLogout=()=>{
+    const handleLogout = () => {
         dispatch(removeUserDetail())
-        router.push("/")
+        void router.push("/")
     }
 
     return (
         <header className='flex justify-between px-8 pb-3 bg-white'>
-            <div className='pt-6 text-3xl font-bold'>Ecommerce</div>
-            <ul className='flex font-medium gap-x-4 pt-6'>
+            <div className='pt-6 text-lg font-bold sm:text-3xl'>Ecommerce</div>
+            <ul className='hidden lg:flex lg:font-medium lg:gap-x-4 lg:pt-6'>
                 <li className="hover:cursor-pointer">Categories</li>
                 <li className="hover:cursor-pointer">Sale</li>
                 <li className="hover:cursor-pointer">Clearance</li>
@@ -40,9 +41,9 @@ function header() {
             </ul>
             <div>
                 <ul className='flex text-xs gap-x-4 pt-2'>
-                    <li className="hover:cursor-pointer">Help</li>
-                    <li className="hover:cursor-pointer">Orders & Returns</li>
-                    <li className="hover:cursor-pointer">Hi, {user.id?user.name.split(" ")[0]:"John"}</li>
+                    <li className="hover:cursor-pointer hidden sm:block">Help</li>
+                    <li className="hover:cursor-pointer hidden sm:block">Orders & Returns</li>
+                    <li className="hover:cursor-pointer">Hi, {user.id ? user.name.split(" ")[0] : "John"}</li>
                 </ul>
                 <div className="flex mt-4 justify-end gap-x-6">
                     <IoIosSearch className="hover:cursor-pointer text-xl" />
@@ -52,10 +53,14 @@ function header() {
             {
                 showLogout ? <IoMdArrowDropdown onClick={(e) => {
                     e.stopPropagation()
-                    setShowLogout(false)
+                    if (user.verified) {
+                        setShowLogout(false)
+                    }
                 }} className='absolute right-4 top-2' /> : <IoMdArrowDropup onClick={(e) => {
                     e.stopPropagation()
-                    setShowLogout(true)
+                    if (user.verified) {
+                        setShowLogout(true)
+                    }
                 }} className='absolute right-4 top-2' />
             }
             {
@@ -67,4 +72,4 @@ function header() {
     )
 }
 
-export default header
+export default Header

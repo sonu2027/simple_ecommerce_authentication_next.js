@@ -1,12 +1,17 @@
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
 
 const prisma = new PrismaClient();
+
+const deleteMarkedProductSchema = z.object({
+    userId: z.number(),
+});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         console.log("req for post method");
-        const { userId } = req.body
+        const { userId } = deleteMarkedProductSchema.parse(req.body)
 
         try {
             const markedProductId = await prisma.markedProductId.findMany({
@@ -14,7 +19,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     userId
                 }
             })
-            console.log("marked Product is: ", markedProductId);
 
             res.status(201).json(markedProductId);
         } catch (error) {

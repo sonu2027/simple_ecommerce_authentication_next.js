@@ -1,11 +1,18 @@
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from "zod"
 
 const prisma = new PrismaClient();
 
+const userData = z.object({
+    useremail: z.string(),
+    userpassword: z.string(),
+})
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { useremail: email, userpassword: password } = req.body;
+
+        const { useremail: email, userpassword: password } = userData.parse(req.body);
         try {
             const user = await prisma.user.findUnique({
                 where: {
@@ -13,8 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     password,
                 },
             });
-            console.log("user found while login is: ", user);
-            
+
             res.status(201).json(user);
         } catch (error) {
             res.status(500).json({ error: 'Error login user' });

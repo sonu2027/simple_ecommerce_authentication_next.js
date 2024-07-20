@@ -1,12 +1,17 @@
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from "zod"
 
 const prisma = new PrismaClient();
+
+const userData = z.object({
+    email: z.string()
+})
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const verified = true
     if (req.method === 'PUT') {
-        const { email } = req.body;
+        const { email } = userData.parse(req.body);
         try {
             const user = await prisma.user.update({
                 where: {
@@ -16,17 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     verified
                 }
             });
-            console.log("user after verified: ", verified);
             res.status(201).json(user);
 
-            // if (user && user.otp && user.otp === otp) {
-            //     console.log("otp verification successful");
-            //     res.status(201).json(user);
-            // }
-            // else {
-            //     console.log("otp verification failed");
-            //     throw new Error("OTP verification failed");
-            // }
         } catch (error) {
             res.status(500).json({ error: 'Error registering user' });
         } finally {

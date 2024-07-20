@@ -1,23 +1,27 @@
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from "zod"
 
 const prisma = new PrismaClient();
 
+const userData = z.object({
+    useremail: z.string(),
+    otp: z.string()
+})
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { useremail: email, otp } = req.body;
+        const { useremail: email, otp } = userData.parse(req.body);
         try {
             const user = await prisma.user.findUnique({
                 where: {
                     email,
                 },
             });
-            if (user && user.otp && user.otp === otp) {
-                console.log("otp verification successful");
+            if (user?.otp === otp) {
                 res.status(201).json(user);
             }
             else {
-                console.log("otp verification failed");
                 throw new Error("OTP verification failed");
             }
         } catch (error) {

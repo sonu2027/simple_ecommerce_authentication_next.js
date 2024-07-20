@@ -5,29 +5,47 @@ import { createMarkProduct } from '~/databaseCall/createMarkProduct';
 import { useSelector } from 'react-redux';
 import { getMarkProduct } from '~/databaseCall/getMarkProduct';
 import { deleteMarkedProduct } from '~/databaseCall/deleteMarkedProduct';
+import type { RootState } from '~/store/store';
 
-function products({ products }) {
+type Product = {
+    id: number;
+    name: string;
+    createdAt: string; 
+}
 
-    let user = useSelector((s) => s.user.data)
+type ProductsProps = {
+    products: Product[];
+}
 
-    const [renderProducts, setRenderProducts] = useState([])
+type MarkedProduct = {
+    productId: string;
+    userId: number;
+}
+
+const Products: React.FC<ProductsProps> = ({ products }) => {
+
+    const user = useSelector((s: RootState) => s.user.data)
+
+    const [renderProducts, setRenderProducts] = useState<Product[]>([]);
     const [page, setPage] = useState(0)
-    const [pageLimit, setPageLimit] = useState(6) // If  you want show other than 6 products in a page you can just change the value 6 to your desired value and everything will handle automatically in code
-    const [totalPage, setTotalPage] = useState(0)
-    const [markedProducts, setMarkedProducts] = useState([])
-    const [productChecked, setProductChecked] = useState(false)
+    const pageLimit = 6 // If  you want show other than 6 products in a page you can just change the value 6 to your desired value and everything will handle automatically in code
+    const [totalPage, setTotalPage] = useState<number>(0)
+    const [markedProducts, setMarkedProducts] = useState<number[]>([]);
+    const [productChecked, setProductChecked] = useState<boolean>(false)
 
     useEffect(() => {
         getMarkProduct(user.id)
-            .then((data) => {
-                setMarkedProducts(data.map((e) => {
+            .then((data: MarkedProduct[]) => {
+                console.log("marked product I am receiving: ", data);
+
+                setMarkedProducts(data.map((e: MarkedProduct) => {
                     return Number(e.productId)
                 }))
             })
             .catch((error) => {
                 console.error("Error getMarkProduct: ", error);
             })
-    }, [productChecked])
+    }, [productChecked, user.id])
 
     useEffect(() => {
         const pages = Math.floor(products.length / pageLimit)
@@ -35,7 +53,7 @@ function products({ products }) {
         setRenderProducts(products.filter((e, i) => i < pageLimit))
     }, [products])
 
-    const handleNext = (add) => {
+    const handleNext = (add: number) => {
         setPage(page + add)
         if (page == totalPage - 1) {
             setRenderProducts(products.filter((e, i) => i >= pageLimit * (page + add)))
@@ -45,16 +63,16 @@ function products({ products }) {
         }
     }
 
-    const handlePrev = (sub) => {
+    const handlePrev = (sub: number) => {
         setPage(page - sub)
         setRenderProducts(products.filter((e, i) => i >= pageLimit * (page - sub) && i < pageLimit * (page - sub + 1)))
     }
 
-    const markedProduct = (e) => {
+    const markedProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         if (e.target.checked) {
             createMarkProduct(user.id, e.target.id) // e.target.checked is productId
-                .then((data) => {
+                .then(() => {
                     setProductChecked(!productChecked)
                 })
                 .catch((error) => {
@@ -63,7 +81,7 @@ function products({ products }) {
         }
         else {
 
-            deleteMarkedProduct(user.id, e.target.id) // e.target.checked is productId
+            deleteMarkedProduct(user.id, e.target.id) 
                 .then(() => {
                     setProductChecked(!productChecked)
                 })
@@ -75,7 +93,7 @@ function products({ products }) {
 
     return (
         <div className='flex flex-col gap-y-4 border-1 border-solid border-gray-300 py-4 px-8 rounded-xl'>
-            <div className='text-center font-semibold text-2xl mt-1'>Please mark your interests!</div>
+            <div className='text-center font-semibold text-xl sm:text-2xl mt-1'>Please mark your interests!</div>
 
             <div className='text-center text-sm'>We will keep you notified.</div>
 
@@ -83,8 +101,8 @@ function products({ products }) {
                 <label className='font-medium text-lg' htmlFor="">My saved interests!</label>
                 {
                     renderProducts.map((e) => <div key={e.id} className='flex justify-start items-center gap-x-3'>
-                        <input checked={markedProducts.includes(e.id)} onChange={markedProduct} type="checkbox" name="" id={e.id} />
-                        <label htmlFor={e.id}>{e.name}</label>
+                        <input checked={markedProducts.includes(e.id)} onChange={markedProduct} type="checkbox" name="" id={String(e.id)} />
+                        <label htmlFor={String(e.id)}>{e.name}</label>
                     </div>)
                 }
             </form>
@@ -126,4 +144,4 @@ function products({ products }) {
     )
 }
 
-export default products
+export default Products

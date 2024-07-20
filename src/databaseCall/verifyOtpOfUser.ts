@@ -1,4 +1,14 @@
-export async function verifyOtpOfUser(e, inputOtp, useremail) {
+type userData = {
+    createdAt: string,
+    email: string,
+    id: number,
+    name: string,
+    otp: string,
+    password: string,
+    verified: boolean
+}
+
+export async function verifyOtpOfUser(e: React.FormEvent<HTMLFormElement>, inputOtp: string[], useremail: string):Promise<userData> {
     let otp = ""
     inputOtp.map((e) => otp += e)
 
@@ -13,7 +23,7 @@ export async function verifyOtpOfUser(e, inputOtp, useremail) {
         if (!response.ok) {
             throw new Error('Failed to verify user');
         }
-        const data = await response.json();
+        const data = await response.json() as userData;
         return data
     } catch (error) {
         throw error

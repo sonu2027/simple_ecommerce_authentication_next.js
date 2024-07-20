@@ -1,25 +1,28 @@
 import nodemailer from "nodemailer"
-
-
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from "zod"
 
 const prisma = new PrismaClient();
 
+const userData = z.object({
+    email: z.string()
+})
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    const { email } = req.body;
+    const { email } = userData.parse(req.body);
 
     if (req.method === 'POST') {
 
         try {
-            const user = await prisma.user.findUnique({
+            const users = await prisma.user.findUnique({
                 where: {
                     email,
                 },
             });
 
-            let transporter = nodemailer.createTransport({
+            const transporter = nodemailer.createTransport({
                 service: "Gmail",
                 auth: {
                     user: "sonu.mondal.2027@gmail.com",
@@ -27,11 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             });
 
-            let mailOptions = {
+            const mailOptions = {
                 from: "sonu.mondal.2027@gmail.com",
                 to: email,
                 subject: "Email Verification Code",
-                text: `Your verification code is: ${user.otp}.
+                text: `Your verification code is: ${users?.otp}.
                 Enter this verification code to proceed`,
             };
 

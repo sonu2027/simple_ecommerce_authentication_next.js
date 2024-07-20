@@ -1,29 +1,35 @@
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
 
 const prisma = new PrismaClient();
 
+const deleteMarkedProductSchema = z.object({
+    userId: z.number(),
+    productId: z.string(),
+});
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'DELETE') {
-        const { userId, productId } = req.body
-
-        console.log("userId and product id received is: ", userId, productId, typeof userId, typeof productId);
-
         try {
-            console.log("I am in delete method");
+            const { userId, productId } = deleteMarkedProductSchema.parse(req.body);
+
             const deleteMarkedProduct = await prisma.markedProductId.delete({
                 where: {
-                    productId_userId: { // Compound key
+                    productId_userId: { 
                         productId: productId,
-                        userId: userId
-                    }
-                }
-            })
-            console.log("deleted marked Product is: ", deleteMarkedProduct);
+                        userId: userId,
+                    },
+                },
+            });
 
             res.status(201).json(deleteMarkedProduct);
         } catch (error) {
-            res.status(500).json({ error: 'Error deleting marked product product' });
+            if (error instanceof z.ZodError) {
+                res.status(400).json({ error: 'Invalid request body' });
+            } else {
+                res.status(500).json({ error: 'Error deleting marked product' });
+            }
         } finally {
             await prisma.$disconnect();
         }

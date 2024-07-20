@@ -5,16 +5,23 @@ import { getProducts } from '~/databaseCall/getProducts'
 import Products from '~/_components/products'
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
+import type { RootState } from '~/store/store'
 
-function homepage() {
+type Product = {
+  id: number;
+  name: string;
+  createdAt: string;
+}
 
-  const [products, setProducts] = useState([])
-  const user = useSelector((s) => s.user.data)
+function Homepage() {
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const user = useSelector((s: RootState) => s.user.data)
   const router = useRouter()
 
   useEffect(() => {
-    if (!user.id) {
-      router.push("/")
+    if (!user.verified) {
+      void router.push("/")
     }
     else {
       getProducts()
@@ -25,7 +32,7 @@ function homepage() {
           console.error("Error getProducts: ", error);
         })
     }
-  }, [])
+  }, [router, user.verified])
 
   return (
     <div>
@@ -43,4 +50,4 @@ function homepage() {
   )
 }
 
-export default homepage
+export default Homepage

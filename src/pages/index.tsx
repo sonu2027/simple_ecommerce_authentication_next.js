@@ -6,15 +6,13 @@ import SignUp from "../_components/signUp"
 import Login from "../_components/login"
 import VerifyOtp from "~/_components/verifyotp";
 
-export default function Home() {
+const Home: React.FC = () => {
 
-  const [users, setUsers] = useState([]);
-
-  const [signup, setsignup] = useState<boolean>(true)
+  const [signup, setsignup] = useState<boolean>(false)
   const [login, setLogin] = useState<boolean>(false)
-  const [verifyOtp, setVerifyOtp] = useState<boolean>(false)
+  const [verifyOtp, setVerifyOtp] = useState<boolean>(true)
 
-  const [keepEmail, setKeepEmail] = useState("")
+  const [keepEmail, setKeepEmail] = useState<string>("")
 
   return (
     <>
@@ -34,10 +32,12 @@ export default function Home() {
             login && <Login setKeepEmail={setKeepEmail} setsignup={setsignup} setLogin={setLogin} setVerifyOtp={setVerifyOtp} />
           }
           {
-            verifyOtp && <VerifyOtp keepEmail={keepEmail} setsignup={setsignup} setLogin={setLogin} setVerifyOtp={setVerifyOtp} />
+            verifyOtp && <VerifyOtp keepEmail={keepEmail}/>
           }
         </div>
       </div>
     </>
   );
 }
+
+export default Home

@@ -1,14 +1,18 @@
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from "zod"
 
 const prisma = new PrismaClient();
 
+const productData = z.object({
+    userId: z.number(),
+    productId: z.string()
+})
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const { userId, productId } = req.body;
+        const { userId, productId }: { userId: number, productId: string } = productData.parse(req.body);
 
-        console.log("userId and productId in marked product: ", userId , productId, typeof userId ,typeof productId);
-        
         try {
             const MarkedProductId = await prisma.markedProductId.create({
                 data: {

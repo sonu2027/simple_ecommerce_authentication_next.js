@@ -3,7 +3,14 @@ import React, { useEffect } from 'react'
 import { useState } from 'react';
 import { userRegistartion } from '~/databaseCall/userRegistartion';
 
-function signUp({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
+type signupProps = {
+    setKeepEmail: (email: string) => void;
+    setsignup: (value: boolean) => void;
+    setLogin: (value: boolean) => void;
+    setVerifyOtp: (value: boolean) => void;
+}
+
+const SignUp: React.FC<signupProps> = ({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) => {
 
     const [username, setUsername] = useState('');
     const [useremail, setUseremail] = useState('');
@@ -11,15 +18,13 @@ function signUp({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
 
     const [signupSuccess, setSignupSuccess] = useState(false)
 
-    const [data, setData] = useState({})
-
     useEffect(() => {
         if (signupSuccess) {
             setsignup(false)
             setLogin(false)
             setVerifyOtp(true)
         }
-    }, [signupSuccess])
+    }, [signupSuccess, setsignup, setLogin, setVerifyOtp])
 
     const handleComponentRendering = () => {
         setsignup(false)
@@ -28,7 +33,7 @@ function signUp({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
     }
 
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         userRegistartion(username, useremail, userpassword)
             .then(() => {
@@ -36,13 +41,13 @@ function signUp({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
             })
             .catch((error) => {
                 console.log("Error userRegistartion: ", error);
-                
+
             })
     }
 
     return (
         <div className='flex flex-col gap-y-4 border-1 border-solid border-gray-300 py-4 px-8 rounded-xl'>
-            <div className='text-center font-semibold text-2xl'>Create your account</div>
+            <div className='text-center font-semibold text-xl sm:text-2xl'>Create your account</div>
 
             <form className='flex flex-col gap-y-5' onSubmit={handleSubmit} >
                 <div className='flex flex-col'>
@@ -74,4 +79,4 @@ function signUp({ setKeepEmail, setsignup, setLogin, setVerifyOtp }) {
     )
 }
 
-export default signUp
+export default SignUp

@@ -1,4 +1,9 @@
-export async function createMarkProduct(userId, productId) {
+interface MarkProductResponse {
+    userId: number;
+    productId: string;
+}
+
+export async function createMarkProduct(userId: number, productId: string): Promise<MarkProductResponse> {
     try {
         const response = await fetch('/api/markProduct', {
             method: 'POST',
@@ -7,12 +12,15 @@ export async function createMarkProduct(userId, productId) {
             },
             body: JSON.stringify({ userId, productId }),
         });
+
         if (!response.ok) {
-            throw new Error('Failed to marked product for user');
+            throw new Error('Failed to mark product for user');
         }
-        const data = await response.json();
-        return data
+
+        const data = await response.json() as MarkProductResponse;
+
+        return data;
     } catch (error) {
-        throw error
+        throw error;
     }
 }
