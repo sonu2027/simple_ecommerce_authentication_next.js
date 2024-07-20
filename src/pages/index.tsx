@@ -8,9 +8,9 @@ import VerifyOtp from "~/_components/verifyotp";
 
 const Home: React.FC = () => {
 
-  const [signup, setsignup] = useState<boolean>(false)
+  const [signup, setsignup] = useState<boolean>(true)
   const [login, setLogin] = useState<boolean>(false)
-  const [verifyOtp, setVerifyOtp] = useState<boolean>(true)
+  const [verifyOtp, setVerifyOtp] = useState<boolean>(false)
 
   const [keepEmail, setKeepEmail] = useState<string>("")
 
